@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Purchase System - Menu</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('img2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+        .title h1 {
+            font-size: 2.2em;
+            color: #2d3436;
+            margin: 0;
+            font-weight: bold;
+        }
+        .title h2 {
+            font-size: 1.6em;
+            color: #636e72;
+            margin: 5px 0;
+        }
+        .menu-list {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .menu-list th, .menu-list td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .menu-list th {
+            background-color: #2d3436;
+            color: white;
+        }
+        .menu-list tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        .menu-list tr:hover {
+            background-color: #dfe6e9;
+        }
+        .actions {
+            margin: 15px 0;
+        }
+        .actions button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 14px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .actions button:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+        .actions .home {
+            background-color: #00b894;
+        }
+        .actions .bill {
+            background-color: #0984e3;
+        }
+        .menu h3 {
+            font-size: 1.8em;
+            color: #2d3436;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>PHARMACY HOUSE</h1>
+            <h2>Health is Wealth</h2>
+        </div>
+        <div class="menu">
+            <h3>Tablets List</h3>
+            <table class="menu-list">
+                <thead>
+                    <tr>
+                        <th>Item Code</th>
+                        <th>Medicine Type</th>
+                        <th>Price Rs.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Dolo 650</td>
+                        <td>120/-</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Amoxicillin</td>
+                        <td>100/-</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Allopurinol</td>
+                        <td>90/-</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Calcium gluconate</td>
+                        <td>130/-</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Adenosine</td>
+                        <td>140/-</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Paracetamol</td>
+                        <td>75/-</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Ibuprofen</td>
+                        <td>85/-</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Metformin</td>
+                        <td>95/-</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Loratadine</td>
+                        <td>110/-</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Omeprazole</td>
+                        <td>125/-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="actions">
+            <button class="home" onclick="window.location.href='index.html'">Home</button>
+            <button class="bill" onclick="window.location.href='bill.html'">Bill</button>
+        </div>
+    </div>
+</body>
+</html>

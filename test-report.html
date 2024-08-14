@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boundary Value Test Report</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('img2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+        .title h1 {
+            font-size: 2em;
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .actions {
+            margin: 15px 0;
+        }
+        .actions button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 14px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .actions button:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+        .actions .min {
+            background-color: #00b894;
+        }
+        .actions .max {
+            background-color: #0984e3;
+        }
+        .actions .robust {
+            background-color: #d63031;
+        }
+        .actions .normal {
+            background-color: #fdcb6e;
+        }
+        .test-report {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .test-report th, .test-report td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .test-report th {
+            background-color: #2d3436;
+            color: white;
+        }
+        .test-report tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        .test-report tr:hover {
+            background-color: #dfe6e9;
+        }
+        .test-report tbody td {
+            font-size: 14px;
+        }
+        .summary-row td {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>Boundary Value Test Report</h1>
+        </div>
+        <div class="actions">
+            <button class="min" onclick="generateTestReport(0)">Minimum</button>
+            <button class="max" onclick="generateTestReport(10)">Maximum</button>
+            <button class="robust" onclick="generateTestReport('robust')">Robust</button>
+            <button class="normal" onclick="generateTestReport('normal')">Normal</button>
+        </div>
+        <div id="test-report">
+            <h3>Test Report</h3>
+            <table class="test-report">
+                <thead>
+                    <tr>
+                        <th>Medicine Type</th>
+                        <th>Price Rs.</th>
+                        <th>Qty</th>
+                        <th>Amount</th>
+                        <th>Boundary Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="test-report-body">
+                    <!-- Test report items will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
+        <div class="actions">
+            <button onclick="window.location.href='bill.html'">Back to Bill</button>
+            <button onclick="window.location.href='index.html'">Home</button>
+        </div>
+    </div>
+
+    <script>
+        const menu = [
+            { code: 1, type: "Dolo 650", price: 120, discount: false },
+            { code: 2, type: "Amoxicillin", price: 100, discount: true },
+            { code: 3, type: "Allopurinol", price: 90, discount: true },
+            { code: 4, type: "Calcium gluconate", price: 130, discount: false },
+            { code: 5, type: "Adenosine", price: 140, discount: true }
+        ];
+
+        const boundaryValues = {
+            0: "Minimum",
+            10: "Maximum",
+            'robust': "Robust",
+            'normal': "Normal"
+        };
+
+        const expectedResults = {
+            0: { amount: [0, 0, 0, 0, 0], netAmount: [0, 0, 0, 0, 0] },
+            10: { amount: [1200, 1000, 900, 1300, 1400], netAmount: [1200, 1000, 900, 1300, 1400] },
+            'robust': [
+                { qty: -1, amount: [0, 0, 0, 0, 0], netAmount: [0, 0, 0, 0, 0], boundaryType: "Below Minimum" },
+                { qty: 100, amount: [12000, 10000, 9000, 13000, 14000], netAmount: [12000, 10000, 9000, 13000, 14000], boundaryType: "Far Above Maximum" }
+            ],
+            'normal': [
+                { qty: 1, amount: [120, 100, 90, 130, 140], netAmount: [120, 100, 90, 130, 140], boundaryType: "Normal" },
+                { qty: 5, amount: [600, 500, 450, 650, 700], netAmount: [600, 500, 450, 650, 700], boundaryType: "Normal" },
+                { qty: 8, amount: [960, 800, 720, 1040, 1120], netAmount: [960, 800, 720, 1040, 1120], boundaryType: "Normal" },
+                { qty: 2, amount: [240, 200, 180, 260, 280], netAmount: [240, 200, 180, 260, 280], boundaryType: "Normal" },
+                { qty: 6, amount: [720, 600, 540, 780, 840], netAmount: [720, 600, 540, 780, 840], boundaryType: "Normal" }
+            ]
+        };
+
+        function generateTestReport(selectedQty) {
+            const tbody = document.getElementById('test-report-body');
+            tbody.innerHTML = "";
+            let total = 0;
+
+            if (selectedQty === 'robust') {
+                expectedResults['robust'].forEach(testCase => {
+                    menu.forEach(item => {
+                        const amount = item.price * testCase.qty;
+                        const netAmount = amount;
+
+                        const status = testCase.qty < 0 || testCase.qty > 10 ? 'Failed' : netAmount === testCase.netAmount[item.code - 1] ? 'Passed' : 'Failed';
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.type}</td>
+                            <td>${item.price}</td>
+                            <td>${testCase.qty}</td>
+                            <td>${amount}</td>
+                            <td>${testCase.boundaryType}</td>
+                            <td>${status}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                });
+            } else if (selectedQty === 'normal') {
+                expectedResults['normal'].forEach(testCase => {
+                    menu.forEach(item => {
+                        const amount = item.price * testCase.qty;
+                        const netAmount = amount;
+
+                        const status = netAmount === testCase.netAmount[item.code - 1] ? 'Passed' : 'Failed';
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.type}</td>
+                            <td>${item.price}</td>
+                            <td>${testCase.qty}</td>
+                            <td>${amount}</td>
+                            <td>${testCase.boundaryType}</td>
+                            <td>${status}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                });
+            } else {
+                menu.forEach(item => {
+                    const amount = item.price * selectedQty;
+                    const netAmount = amount;
+                    total += netAmount;
+
+                    const expected = expectedResults[selectedQty];
+                    const boundaryType = boundaryValues[selectedQty];
+                    const status = netAmount === expected.netAmount[item.code - 1] ? 'Passed' : 'Failed';
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.type}</td>
+                        <td>${item.price}</td>
+                        <td>${selectedQty}</td>
+                        <td>${amount}</td>
+                        <td>${boundaryType}</td>
+                        <td>${status}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Add total summary row for non-robust cases
+                const summaryRow = document.createElement('tr');
+                summaryRow.classList.add('summary-row');
+                summaryRow.innerHTML = `
+                    <td colspan="4">Total</td>
+                    <td>${total}</td>
+                    <td></td>
+                `;
+                tbody.appendChild(summaryRow);
+            }
+        }
+    </script>
+</body>
+</html>

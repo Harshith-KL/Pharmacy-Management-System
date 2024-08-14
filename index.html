@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Purchase System - Bill</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('img3.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+        .title h1 {
+            font-size: 2.2em;
+            color: #333;
+            margin: 0;
+            font-weight: bold;
+        }
+        .title h2 {
+            font-size: 1.4em;
+            color: #666;
+            margin: 10px 0;
+        }
+        .author-details {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(240, 240, 240, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        .author-details h3 {
+            font-size: 1.4em;
+            color: #333;
+            margin: 0 0 10px;
+        }
+        .author-name {
+            color: darkblue;
+            font-family: 'Copperplate Gothic Bold', sans-serif;
+            font-size: 1em;
+            margin: 5px 0;
+        }
+        .bill-list {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .bill-list th, .bill-list td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .bill-list th {
+            background-color: #2d3436;
+            color: white;
+        }
+        .bill-list tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        .bill-list tr:hover {
+            background-color: #dfe6e9;
+        }
+        .actions {
+            margin: 15px 0;
+        }
+        .actions button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 14px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .actions button:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+        .actions .generate {
+            background-color: #00b894;
+        }
+        .actions .check-report {
+            background-color: #0984e3;
+        }
+        .actions .home {
+            background-color: #fdcb6e;
+        }
+        .actions .menu {
+            background-color: #ff7675;
+        }
+        .bill-summary {
+            margin: 15px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        #datetime {
+            font-style: italic;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>PHARMACY HOUSE</h1>
+            <h2>Health is Wealth</h2>
+            <p id="datetime"></p>
+        </div>
+        <div class="author-details">
+            <h3>Project: Pharmacy Management System</h3>
+            <p>Mini Project Submitted By:</p>
+            <p class="author-name">Gurukiran B Banakar 4JN21IS027</p>
+            <p class="author-name">Harshith K L 4JN21IS032</p>
+            <p>Email: gbgurukiran@gmail.com</p>
+            <p>Programing Languages used in this project: HTML,CSS,Java Script</p>
+        </div>
+        <div id="bill">
+            <h3>Bill Summary</h3>
+            <table class="bill-list">
+                <thead>
+                    <tr>
+                        <th>Medicines</th>
+                        <th>Price Rs.</th>
+                        <th>Qty</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="bill-body">
+                    <!-- Bill items will be added here dynamically -->
+                </tbody>
+            </table>
+            <div class="bill-summary">
+                <p id="total">Total: 0</p>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="generate" onclick="calculateBill()">Generate Bill</button>
+            <button class="check-report" onclick="window.location.href='test-report.html'">Check Test Cases</button>
+            <button class="home" onclick="window.location.href='index.html'">Home</button>
+            <button class="menu" onclick="window.location.href='menu.html'">Tablets list</button>
+        </div>
+    </div>
+
+    <script>
+        const menu = [
+            { code: 1, type: "Dolo 650", price: 120, discount: false },
+            { code: 2, type: "Amoxicillin", price: 100, discount: true },
+            { code: 3, type: "Allopurinol", price: 90, discount: true },
+            { code: 4, type: "Calcium gluconate", price: 130, discount: false },
+            { code: 5, type: "Adenosine", price: 140, discount: true }
+        ];
+
+        function calculateBill() {
+            const tbody = document.getElementById('bill-body');
+            tbody.innerHTML = "";
+            let total = 0;
+
+            menu.forEach(item => {
+                let qty = prompt(`Enter quantity for ${item.type} (code ${item.code}): `);
+                qty = parseInt(qty);
+
+                if (!isNaN(qty) && qty > 0) {
+                    const amount = item.price * qty;
+                    total += amount;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.type}</td>
+                        <td>${item.price}</td>
+                        <td>${qty}</td>
+                        <td>${amount}</td>
+                    `;
+                    tbody.appendChild(row);
+                } else {
+                    alert(`Invalid quantity for ${item.type}.`);
+                }
+            });
+
+            document.getElementById('total').textContent = `Total: ${total}`;
+        } 
+
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('datetime').textContent = now.toLocaleString();
+        }
+
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+</html>
